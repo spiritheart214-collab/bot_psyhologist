@@ -1,9 +1,11 @@
 """Регистрация пользователя"""
 from commands.decorators import command
+from states import WAITING_NAME, user_states
 
 
 @command(["регистрация"])
-def register_command():
-    message = "регистрация"
+def register_command(user_id: int):
+    """Запуск регистрации пользователя"""
 
-    return message, None
+    user_states[user_id] = WAITING_NAME
+    return "Введите ваше имя", None

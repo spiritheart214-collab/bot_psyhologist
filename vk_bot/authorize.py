@@ -24,7 +24,7 @@ class VKBot:
 
         logger.info("Бот авторизирован и готов к запуску !")
 
-    def send_message(self, user_id: int, message: str, keyboard: str) -> None:
+    def send_message(self, user_id: int, message: str, keyboard: str = None) -> None:
         """Отправка сообщений"""
         self.vk.messages.send(
             user_id=user_id,

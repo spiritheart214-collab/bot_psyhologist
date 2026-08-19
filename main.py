@@ -1,11 +1,10 @@
 """Основной файл приложения"""
-
 from vk_api.longpoll import VkEventType
 
-from vk_bot import VKBot
-from logger import logger
-
 from commands import get_command
+from logger import logger
+from vk_bot import VKBot
+from states import handle_state
 
 
 def main():
@@ -22,7 +21,12 @@ def main():
             user_id = event.user_id
             user_message = event.text.lower().strip()
 
-            message, keyboard = get_command(name=user_message)
+            # Если пользователь находится в каком-то состоянии
+            if handle_state(user_id=user_id, user_message=user_message, vk_bot=vk_bot):
+                # Очень важно: Если состояние было найдено, дальше get_command() не вызываем.
+                continue
+
+            message, keyboard = get_command(name=user_message, user_id=user_id)
             vk_bot.send_message(user_id=user_id, message=message, keyboard=keyboard)
 
 
