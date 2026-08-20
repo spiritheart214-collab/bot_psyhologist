@@ -15,3 +15,14 @@ def get_register_menu() -> str:
     keyboard.add_button("Помощь", color=VkKeyboardColor.SECONDARY)
 
     return keyboard.get_keyboard()
+
+
+def get_yes_no_menu() -> str:
+    """ Да / Нет  клавиатура"""
+
+    keyboard = VkKeyboard(inline=True)
+
+    keyboard.add_button("Да", color=VkKeyboardColor.POSITIVE)
+    keyboard.add_button("Нет", color=VkKeyboardColor.NEGATIVE)
+
+    return keyboard.get_keyboard()

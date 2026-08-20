@@ -37,4 +37,3 @@ class VKBot:
         """Получить имя пользователя"""
         user = self.vk.users.get(user_ids=user_id)[0]
         return f"{user['first_name']} {user['last_name']}"
-
