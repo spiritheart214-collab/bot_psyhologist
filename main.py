@@ -1,10 +1,9 @@
 """Основной файл приложения"""
 from vk_api.longpoll import VkEventType
 
-from commands import get_command
+from commands import get_command, handle_active
 from logger import logger
 from vk_bot import VKBot, MessageContext
-from states import handle_state
 
 
 def main():
@@ -19,8 +18,11 @@ def main():
 
             context = MessageContext(user_id=event.user_id, text=event.text.lower().strip(), bot=vk_bot)
 
+            # Todo рассмотреть возможность выввести это в диспатчер создав функцию handle_message , где будет \
+            #  handle_active get_command(context=context) и  vk_bot.send_message. Чтобы все собрать в одном месте
+
             # Если пользователь находится в каком-то состоянии
-            if handle_state(context=context):
+            if handle_active(context=context):
                 # Очень важно: Если состояние было найдено, дальше get_command() не вызываем.
                 continue
 

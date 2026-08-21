@@ -1,4 +1,5 @@
 from .registry import get_command
-from .handlers.custom import register_command
-from .handlers.default import start_command
+from .dispatcher import handle_active
 
+
+__all__ = ["get_command", "handle_active"]
