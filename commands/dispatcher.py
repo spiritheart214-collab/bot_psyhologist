@@ -2,7 +2,7 @@
 
 from vk_bot import MessageContext
 
-from .handlers.custom.register import handle_registration
+from .handlers.custom.registration import handle_registration
 
 # Кортеж сценариев
 _ACTIVE_HANDLERS = (

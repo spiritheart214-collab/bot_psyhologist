@@ -5,14 +5,10 @@
 from enum import Enum
 
 
-class RegistrationUserStates(Enum):
+class RegistrationStates(Enum):
     """Класс с состояниями пользователя"""
 
-    CONFIRM_VK_NAME = "confirm vk name"
-    WAITING_NAME = "waiting name"
-    WAITING_SURNAME = "waiting surname"
-    WAITING_PHONE = "waiting phone"
-
-user_states = {}
-
-
+    CONFIRM_VK_NAME = "confirm_vk_name"
+    WAITING_NAME = "waiting_name"
+    WAITING_SURNAME = "waiting_surname"
+    WAITING_PHONE = "waiting_phone"
