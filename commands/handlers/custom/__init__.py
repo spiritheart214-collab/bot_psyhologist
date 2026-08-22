@@ -1,1 +1,2 @@
-from .register import register_command
+from .registration import register_command, handle_registration
+

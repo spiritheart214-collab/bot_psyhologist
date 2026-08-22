@@ -1,11 +1,9 @@
 """Основной файл приложения"""
-
 from vk_api.longpoll import VkEventType
 
-from vk_bot import VKBot
+from commands import get_command, handle_active
 from logger import logger
-
-from commands import get_command
+from vk_bot import VKBot, MessageContext
 
 
 def main():
@@ -18,12 +16,18 @@ def main():
     for event in vk_bot.longpoll.listen():
         if event.type == VkEventType.MESSAGE_NEW and event.to_me:
 
-            # Забираем данные пользователя
-            user_id = event.user_id
-            user_message = event.text.lower().strip()
+            context = MessageContext(user_id=event.user_id, text=event.text.lower().strip(), bot=vk_bot)
 
-            message, keyboard = get_command(name=user_message)
-            vk_bot.send_message(user_id=user_id, message=message, keyboard=keyboard)
+            # Todo рассмотреть возможность выввести это в диспатчер создав функцию handle_message , где будет \
+            #  handle_active get_command(context=context) и  vk_bot.send_message. Чтобы все собрать в одном месте
+
+            # Если пользователь находится в каком-то состоянии
+            if handle_active(context=context):
+                # Очень важно: Если состояние было найдено, дальше get_command() не вызываем.
+                continue
+
+            message, keyboard = get_command(context=context)
+            vk_bot.send_message(user_id=context.user_id, message=message, keyboard=keyboard)
 
 
 if __name__ == '__main__':
