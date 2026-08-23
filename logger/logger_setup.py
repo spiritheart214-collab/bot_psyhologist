@@ -57,3 +57,6 @@ def setup_logger():
 
     logger.debug(f"Логгер инициализирован в {Path(__file__)}")
     return logger
+
+
+logger = setup_logger()

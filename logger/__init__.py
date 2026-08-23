@@ -1,6 +1,5 @@
 """Настройка пакета"""
-from .logger_setup import setup_logger
+from .logger_setup import logger
+from .bot_decorators import log_message, log_command, log_function
 
-logger = setup_logger()
-
-__all__ = ["logger"]
+__all__ = ["logger", "log_message", "log_command", "log_function"]

@@ -1,12 +1,13 @@
 """Обработчик сценария регистрации пользователя."""
 
+from logger import logger
 from vk_bot import MessageContext
 
-from .session import registration_sessions
+from .session import registration_sessions, RegistrationSession
 from .states import RegistrationStates
 
 
-def handle_confirm_vk_name(context: MessageContext, session) -> None:
+def handle_confirm_vk_name(context: MessageContext, session: RegistrationSession) -> None:
     """Обрабатывает подтверждение имени из VK."""
 
     if context.text == "да":
@@ -34,7 +35,7 @@ def handle_confirm_vk_name(context: MessageContext, session) -> None:
         )
 
 
-def handle_name(context: MessageContext, session,) -> None:
+def handle_name(context: MessageContext, session: RegistrationSession) -> None:
     """Обрабатывает ввод имени."""
 
     session.name = context.text
@@ -46,7 +47,7 @@ def handle_name(context: MessageContext, session,) -> None:
     )
 
 
-def handle_surname(context: MessageContext, session) -> None:
+def handle_surname(context: MessageContext, session: RegistrationSession) -> None:
     """Обрабатывает ввод фамилии."""
 
     session.lastname = context.text
@@ -58,7 +59,7 @@ def handle_surname(context: MessageContext, session) -> None:
     )
 
 
-def handle_phone(context: MessageContext, session) -> None:
+def handle_phone(context: MessageContext, session: RegistrationSession) -> None:
     """Обрабатывает ввод телефона и завершает регистрацию."""
 
     session.phone = context.text
@@ -81,6 +82,8 @@ def handle_registration(context: MessageContext) -> bool:
     if session is None:
         return False
 
+    old_state = session.state
+
     if session.state == RegistrationStates.CONFIRM_VK_NAME:
         handle_confirm_vk_name(context, session)
 
@@ -92,5 +95,14 @@ def handle_registration(context: MessageContext) -> bool:
 
     elif session.state == RegistrationStates.WAITING_PHONE:
         handle_phone(context, session)
+
+    new_state = session.state if context.user_id in registration_sessions else None
+
+    logger.info(
+        f"Переход состояния | "
+        f"Пользователь: {context.bot.get_user_name(context.user_id)} [{context.user_id}] |\n "
+        f"\t{old_state.name} -> "
+        f"{new_state.name if new_state else '[Завершение регистрации!]'}"
+    )
 
     return True

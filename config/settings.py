@@ -26,6 +26,7 @@ class Config:
             logger.success("Все переменные виртуального окружения загруженны успешно!")
 
     def _is_env_variables_exists(self):
+        """Проверка переменных окружения"""
         if not self.VK_TOKEN:
             raise ValueNotLoadedError(variable="VK_TOKEN")
 

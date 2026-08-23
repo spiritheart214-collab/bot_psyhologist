@@ -1,12 +1,15 @@
 from typing import Tuple
 
 from commands.decorators import command
+from logger import log_command
 from keyboards import get_register_menu
 from vk_bot import MessageContext
 
 
 @command(["начать"])
+@log_command
 def start_command(context: MessageContext) -> Tuple[str, str]:
+    """Приветсвенное сообщение"""
     message = ("Привет. Я твой бот - помощник, я буду помагать тебе делать запись на встречу.\n"
                "И это все обо мне! \n"
                "Если ты тут впервые, то нажми на 'регестрация', чтобы я тоже о тебе узнал :3\n"

@@ -20,3 +20,4 @@ def handle_active(context: MessageContext) -> bool:
             return True
 
     return False
+
