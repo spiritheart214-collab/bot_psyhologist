@@ -2,8 +2,9 @@ import time
 from functools import wraps
 from typing import Any, Callable
 
-from  colorama import Fore
+from colorama import Fore
 
+# from vk_bot import MessageContext
 from .logger_setup import logger
 from .utils import _args_to_str, _kwargs_to_str, _extract_context
 
@@ -21,7 +22,7 @@ def log_message(func: Callable) -> Callable:
 
         logger.info(f"НОВОЕ СООБЩЕНИЕ!\n"
                     f"\tПОЛЬЗОВАТЕЛЬ: {user_name} [ID: {context.user_id}]\n"
-                    f"\tСтатус: {Fore.YELLOW } ЗАРЕГЕСТРИРОВАН/НЕ ЗАРЕГЕСТРИРОВАН {Fore.RESET}\n"
+                    f"\tСтатус: {Fore.YELLOW} ЗАРЕГЕСТРИРОВАН/НЕ ЗАРЕГЕСТРИРОВАН {Fore.RESET}\n"
                     f"\tСООБЩЕНИЕ: {context.text}")
 
         result = func(*args, **kwargs)
@@ -43,6 +44,7 @@ def log_command(func: Callable) -> Callable:
 
         result = func(*args, **kwargs)
         return result
+
     return wrapper
 
 
@@ -56,20 +58,36 @@ def log_function(func: Callable) -> Callable:
         log_kwargs = _kwargs_to_str(keyword_args=kwargs)
         coma = ", " if args and kwargs else ""
 
-        logger.info(f"Вызов функции {func.__name__}")
+        logger.info(f"Вызов функции: {func.__name__}")
         logger.debug(f"Функция: {func.__name__}({log_args}{coma}{log_kwargs})")
         logger.debug(f"Документация: \t{func.__doc__}")
 
         start_time = time.perf_counter()
-        result = func(*args, **kwargs)
+        try:
+            result = func(*args, **kwargs)
+        except Exception as error:
+            logger.critical(f"Возникла ошибка: {error}. Завершение работы!")
+            exit("Завершение работы!")
+
         end_time = time.perf_counter()
         result_time = end_time - start_time
 
         if result:
             logger.debug(f"Ответ функции: {func.__name__} = {result}")
 
-        logger.info(f"Завершение функции: {func.__name__}. (Время работы функции: {result_time:.6f})")
+        logger.success(f"Завершение функции: {func.__name__}. (Время работы функции: {result_time:.6f})\n")
 
         return result
 
     return wrapper
+
+
+# def is_user_exist(func: Callable) -> Callable:
+#     """
+#     Проверка на регистрацию уже существующего пользователя.
+#     Если пользователь уже есть в базе данных, то регистрация будет недоступна
+#     """
+#     @wraps(func)
+#     def wrapper(context: MessageContext) -> Any:
+#         # Todo доделать
+#         pass
