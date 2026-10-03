@@ -1,5 +1,9 @@
+from io import StringIO
 from typing import  Any, Dict, TYPE_CHECKING
 
+from rich.console import Console
+
+from .logger_setup import logger
 if TYPE_CHECKING: from vk_bot import MessageContext
 
 
@@ -56,3 +60,19 @@ def _kwargs_to_str(keyword_args: Dict[str, Any]) -> str:
         kwars_str = ", ".join(kwargs_list) if len(kwargs_list) > 1 else kwargs_list[0]
         return kwars_str
     return ""
+
+
+def _log_rich(renderable: Any, level: str = "INFO") -> None:
+    """Записывает объект Rich в лог."""
+
+    buffer = StringIO()
+
+    console = Console(
+        file=buffer,
+        color_system=None,
+        force_terminal=False,
+    )
+
+    console.print(renderable)
+
+    logger.log(level, f"\n{buffer.getvalue()}")

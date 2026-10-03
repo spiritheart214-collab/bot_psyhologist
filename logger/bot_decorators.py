@@ -1,12 +1,13 @@
 import time
 from functools import wraps
-from typing import Any, Callable
+from typing import Any, Callable, TYPE_CHECKING
 
 from colorama import Fore
+from rich.table import Table
 
-# from vk_bot import MessageContext
+if TYPE_CHECKING: from database import Request, User
 from .logger_setup import logger
-from .utils import _args_to_str, _kwargs_to_str, _extract_context
+from .utils import _args_to_str, _kwargs_to_str, _extract_context, _log_rich
 
 
 def log_message(func: Callable) -> Callable:
@@ -22,7 +23,7 @@ def log_message(func: Callable) -> Callable:
 
         logger.info(f"НОВОЕ СООБЩЕНИЕ!\n"
                     f"\tПОЛЬЗОВАТЕЛЬ: {user_name} [ID: {context.user_id}]\n"
-                    f"\tСтатус: {Fore.YELLOW} ЗАРЕГЕСТРИРОВАН/НЕ ЗАРЕГЕСТРИРОВАН {Fore.RESET}\n"
+                    f"{Fore.RESET}\n"
                     f"\tСООБЩЕНИЕ: {context.text}")
 
         result = func(*args, **kwargs)
@@ -82,12 +83,60 @@ def log_function(func: Callable) -> Callable:
     return wrapper
 
 
-# def is_user_exist(func: Callable) -> Callable:
-#     """
-#     Проверка на регистрацию уже существующего пользователя.
-#     Если пользователь уже есть в базе данных, то регистрация будет недоступна
-#     """
-#     @wraps(func)
-#     def wrapper(context: MessageContext) -> Any:
-#         # Todo доделать
-#         pass
+def log_created_user(func: Callable) -> Callable:
+    """Логирует cоздание пользователя"""
+
+    @wraps(func)
+    def wrapper(*args, **kwargs) -> Any:
+        result: User = func(*args, **kwargs)
+
+        table = Table(title="Создан пользователь")
+
+        table.add_column("VK ID")
+        table.add_column("Имя")
+        table.add_column("Фамилия")
+        table.add_column("Телефон")
+
+        table.add_row(
+            str(result.vk_id),
+            result.name,
+            result.surname,
+            result.phone,
+        )
+
+        _log_rich(table)
+
+        return result
+
+    return wrapper
+
+
+def log_create_request(func: Callable) -> Callable:
+    """Логирует cоздание запроса пользователя"""
+
+    @wraps(func)
+    def wrapper(*args, **kwargs) -> Any:
+        result: Request = func(*args, **kwargs)
+
+        table = Table(title="Создан запрос")
+
+        table.add_column("ID")
+        table.add_column("ФИО")
+        table.add_column("Запрос")
+
+        table.add_row(
+            str(result),
+            result.user.get_full_name(),
+            result.request
+        )
+
+        _log_rich(table)
+
+        return result
+
+    return wrapper
+
+
+
+
+
