@@ -18,7 +18,7 @@ def get_register_menu() -> str:
 
 
 def get_yes_no_menu() -> str:
-    """ Да / Нет  клавиатура"""
+    """ Да / Нет клавиатура"""
 
     keyboard = VkKeyboard(inline=True)
 

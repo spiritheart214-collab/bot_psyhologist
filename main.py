@@ -2,12 +2,14 @@
 from vk_api.longpoll import VkEventType
 
 from commands import handle_massage
+from database import create_db
 from logger import logger
 from vk_bot import VKBot, MessageContext
 
 
 def main():
     """Запуск бота. Основная программная функция"""
+    create_db()
     vk_bot = VKBot()
     logger.success("Бот запущен!")
 
