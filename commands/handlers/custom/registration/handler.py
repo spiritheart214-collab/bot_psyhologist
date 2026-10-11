@@ -4,6 +4,7 @@ from logger import logger
 from vk_bot import MessageContext
 
 from database import create_user, create_user_request, find_user
+from validators import validate_phone
 
 from .session import registration_sessions, RegistrationSession
 from .states import RegistrationStates
@@ -65,21 +66,40 @@ def handle_surname(context: MessageContext, session: RegistrationSession) -> Non
 def handle_phone(context: MessageContext, session: RegistrationSession) -> None:
     """Обрабатывает ввод телефона"""
 
-    session.phone = context.text
-    session.state = RegistrationStates.WAITING_REQUEST
+    phone = context.text
+    valid_phone = validate_phone(phone=phone)
+    if valid_phone:
 
-    context.bot.send_message(
-        user_id=context.user_id,
-        message="Желаете ввести запрос сейчас?",
-        keyboard=get_yes_no_menu()
-    )
+        session.phone = context.text
+        session.state = RegistrationStates.WAITING_REQUEST
 
-    create_user(
-        vk_id=context.user_id,
-        name=session.name,
-        surname=session.lastname,
-        phone=session.phone
-    )
+        context.bot.send_message(
+            user_id=context.user_id,
+            message="Желаете ввести запрос сейчас?",
+            keyboard=get_yes_no_menu()
+        )
+
+        create_user(
+            vk_id=context.user_id,
+            name=session.name,
+            surname=session.lastname,
+            phone=session.phone
+        )
+    else:
+        message = (
+            "Похоже, номер телефона введён некорректно.\n\n"
+            "Пожалуйста, введите номер в одном из форматов:\n"
+            "• +7 903 123-45-67\n"
+            "• 8 (903) 123-45-67\n"
+            "• 89031234567\n\n"
+            "Номер должен содержать только цифры, пробелы, скобки и дефисы."
+        )
+
+        context.bot.send_message(
+            user_id=context.user_id,
+            message=message,
+
+        )
 
 
 def handle_request_yes_no_choice(context: MessageContext, session: RegistrationSession) -> None:

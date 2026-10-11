@@ -1,6 +1,6 @@
 """Подсказки по командам"""
-from commands.guard import is_user_exist
-from commands.decorators import command
+
+from commands.decorators import command, is_user_exist
 from logger import log_command
 from vk_bot import MessageContext
 

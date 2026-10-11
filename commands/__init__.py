@@ -1,5 +1,5 @@
 from vk_bot import MessageContext
-from logger import log_message
+from commands.decorators import log_message
 from .registry import get_command
 from .dispatcher import handle_active
 

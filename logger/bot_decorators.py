@@ -10,28 +10,6 @@ from .logger_setup import logger
 from .utils import _args_to_str, _kwargs_to_str, _extract_context, _log_rich
 
 
-def log_message(func: Callable) -> Callable:
-    """Декоратор логирующий входящие сообщения"""
-
-    @wraps(func)
-    def wrapper(*args, **kwargs) -> Any:
-        """Находит пользователя, выводит сообщения, ФИО, статус регистрации"""
-
-        # Вне зависимости как обьект context был передан (через арги или кварги) контекст будет извлечен
-        context = _extract_context(*args, **kwargs)
-        user_name = context.bot.get_user_name(context.user_id)
-
-        logger.info(f"НОВОЕ СООБЩЕНИЕ!\n"
-                    f"\tПОЛЬЗОВАТЕЛЬ: {user_name} [ID: {context.user_id}]\n"
-                    f"{Fore.RESET}\n"
-                    f"\tСООБЩЕНИЕ: {context.text}")
-
-        result = func(*args, **kwargs)
-        return result
-
-    return wrapper
-
-
 def log_command(func: Callable) -> Callable:
     """Декоратор логирующий вызов команды"""
 
@@ -135,8 +113,3 @@ def log_create_request(func: Callable) -> Callable:
         return result
 
     return wrapper
-
-
-
-
-
